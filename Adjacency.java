@@ -6,28 +6,16 @@ class AdjancencyListGraph<T> implements Graph<T> {
 
     // Creamos una lista que contendra los vertices, es decir, las instancias de V 
     private List<node<T>> graph;
-
-    // Esta lista puede generar errores en la consistencia del programa
-    private List<T> vertices = new LinkedList<T>();
-
-    // Creo que vertexCardinality es innecesaria;
-    private int vertexCardinality;
     private int edgeCardinality;
 
-    // Por convencion se usa un constructor en especial cuando uno de los 
-    // atributos se inicializa con una funcion.
     public AdjancencyListGraph(){
         this.graph =  new LinkedList<node<T>>();
-        vertexCardinality = 0;
         edgeCardinality = 0;
     }
 
     // Creamos una clase vertice que tendra el atributo valor y una lista de arcos con respecto al vertice
-    // Esta clase en realidad es la reprsentacion de un nodo de lista enlazada, los metodos 
-    // agregados ayudan a la simplificacion del codigo en el futuro
     private static class node<T> {
         T value;
-        int successorsCount = 0;
         List<T> successorsList = new LinkedList<T>();
 
         public node(T value){
@@ -35,21 +23,25 @@ class AdjancencyListGraph<T> implements Graph<T> {
         }
 
         public void addSuccesor(T succesor){
-            this.successorsList.add(succesor);
-            successorsCount++; 
+            this.successorsList.add(succesor); 
         }
 
         // cambiar para devolver un bool
         public void removeSuccesor(T succesor){
-            if (successorsCount > 0){
+            if (this.size() > 0){
                 this.successorsList.remove(succesor);
-                successorsCount--;
             }
  
+        }
+
+        //Devolver tamaño de la lista enlazada
+        public int size() {
+            return this.successorsList.size();
         }
     }
 
     // Metodo agregar vertice (Sin anidamiento)
+    // Este metodo posee una complejidad de O(|V|), es decir, es tiempo constante(suponiendo que es una lista circular)
     public boolean add(T vertex){
         // Verifica si el vertice pertenece al conjunto V
         // Si no pertenece crea un vertice con valor vertex y un atributo lista que funcionara como arcos
@@ -62,21 +54,26 @@ class AdjancencyListGraph<T> implements Graph<T> {
         
         node<T> newVertex = new node<T>(vertex);
         this.graph.add(newVertex);
-        vertices.add(vertex);
-        vertexCardinality++;
         System.out.println("Agregado vertice de forma exitosa");
         return true;
     }
 
     // Metodo para conectar dos vertices que pertenescan al conjunto 
+    // La complejidad: se hace una primera revision en la lista de nodos O(n)
+    // Se realiza una segunda revision con el elemento to, en el peor de los casos su complejidad es O(n)
+    // Esto nos lleva a que la complejidad del metodo sea O(n*n)
     public boolean connect(T from, T to) {
 
         if(!this.contains(from) || !this.contains(to)){
             System.out.println("Alguno de los vertices no pertenece al conjunto");
             return false;
         }
-        for (node<T> i: graph ) {
+        for (node<T> i: graph) {
             if (i.value.equals(from)) {
+                if (i.successorsList.contains(to)) {
+                    System.out.println("Estos dos vertices ya se encuentran conectados");
+                    return true;
+                }
                 i.addSuccesor(to);
                 this.edgeCardinality++;
                 break;
@@ -85,7 +82,9 @@ class AdjancencyListGraph<T> implements Graph<T> {
         System.out.println("Arco generado de forma exitosa");
         return true;
     }
+
     // Metodo que elimina el arco de un par de vertices
+    // Complejidad: Al tener la misma estructura que connect, la complejidad de este metodo es O(n*n)
     public boolean disconnect(T from, T to) {
 
         if(!this.contains(from) || !this.contains(to)){
@@ -95,6 +94,10 @@ class AdjancencyListGraph<T> implements Graph<T> {
 
         for (node<T> i: graph ) {
             if (i.value.equals(from)) {
+                if (!i.successorsList.contains(to)) {
+                    System.out.println("Estos dos vertices ya se encuentran desconectados");
+                    return true;
+                }
                 i.removeSuccesor(to);
                 this.edgeCardinality--;
                 break;
@@ -105,6 +108,7 @@ class AdjancencyListGraph<T> implements Graph<T> {
     }
 
     // Metodo contains, verifica si pertenece al conjunto V
+    // Complejidad: Se realiza un recorrido a toda la lista de nodos, su complejidad es O(n)
     public boolean contains(T vertex) {
         for (node<T> i: graph) {
             if (i.value.equals(vertex)) {
@@ -117,6 +121,8 @@ class AdjancencyListGraph<T> implements Graph<T> {
     }
 
     // Metodo getInwardEdges, recibimos un vertice y retornar la lista de predecesores de ese vertice 
+    // Complejidad: Se realiza una busqueda en cada nodo y luego por cada nodo se busca si en los sucesores esta to
+    // Esto nos lleva a una complejidad de O(n*n)
     public List<T> getInwardEdges(T to) {
 
         if(!this.contains(to)){
@@ -125,6 +131,7 @@ class AdjancencyListGraph<T> implements Graph<T> {
 
         List<T> predecessorsList = new LinkedList<>();
         for (node<T> i: graph) {
+            // Conteplando la idea que es un grafo simple, sin lazos.
             if (!i.value.equals(to) && i.successorsList.contains(to)) {
                 predecessorsList.add(i.value);
             }
@@ -135,6 +142,7 @@ class AdjancencyListGraph<T> implements Graph<T> {
 
     // Metodo getOutwardEdges, recibimos un vertice y retornamos la lista de sucesores de ese vertice
     // Creo que este metodo puede dar error por como Java maneja las referencias
+    // Complijedidad: Con errores en la referencia es O(n*n), si no generada nada es O(n)
     public List<T> getOutwardEdges(T from) {
         if (this.contains(from)) {
             for (node<T> i: graph) {
@@ -147,6 +155,8 @@ class AdjancencyListGraph<T> implements Graph<T> {
         return null;
     }
 
+    // Metodo que recibe un vertice y retorna los vertices adyacentes
+    // Complejidad: O(n*n)
     public List<T> getVerticesConnectedTo(T vertex){
         if(!this.contains(vertex)){
             return null;
@@ -154,10 +164,6 @@ class AdjancencyListGraph<T> implements Graph<T> {
         List<T> neighborList = new LinkedList<T>();
         List<T> predecessorsList = getInwardEdges(vertex);
         List<T> successorsList = getOutwardEdges(vertex);
-
-        if(predecessorsList.equals(null) || successorsList.equals(null)){
-            return null;
-        }
 
         for (T v: predecessorsList){
             neighborList.add(v);
@@ -171,19 +177,21 @@ class AdjancencyListGraph<T> implements Graph<T> {
     }
 
     // Metodo getAllVertices, se retorna todos los vertices
+    // Complejidad: O(n)
     public List<T> getAllVertices() {
 
-        // List<T> vertexList = new LinkedList<>();
-        // for (node<T> i: graph){
-        //     vertexList.add(i.value);
-        // }
-        // return vertexList;
+        List<T> vertexList = new LinkedList<>();
+        for (node<T> i: graph) {
+             vertexList.add(i.value);
+        }
 
-        System.out.print("El conjunto vertices es: " + vertices + "\n");
-        return vertices;
+        System.out.print("El conjunto vertices es: " + vertexList + "\n");
+        return vertexList;
     }
 
-    // Metodo remove, se recibe un vertice y lo eliminamos del grafo 
+    // Metodo remove, se recibe un vertice y lo eliminamos del grafo
+    // Duda si trabajamos con multigrafo
+    // Complejidad: O(n*n)
     public boolean remove(T vertex) {
         
         if(!this.contains(vertex)){
@@ -196,8 +204,6 @@ class AdjancencyListGraph<T> implements Graph<T> {
                 edgeCardinality -=  i.successorsCount;
                 int indexOfVertex = graph.indexOf(i);
                 this.graph.remove(indexOfVertex);
-                this.vertices.remove(vertex);
-                this.vertexCardinality--;
                 break;
             }
         }
@@ -214,12 +220,14 @@ class AdjancencyListGraph<T> implements Graph<T> {
     }
 
     // Metodo size, retorna el la cardinadlidad de vertices que tiene el grafo
+    // Complejidad: O(1)/ O(n) en caso que no tenga una cabeza. Consultar
     public int size() {
-        System.out.print("El tamaño del conjunto vertices es: " + vertexCardinality + "\n");
-        // podemos simplemente usar graph.size(), creo que es 0(1) y todo;
-        return vertexCardinality;
+        System.out.print("El tamaño del conjunto vertices es: " + graph.size() + "\n");
+        return graph.size();
     }
 
+    // Metodo que recibe una coleccion de elementos y retorna un subgrafo
+    // Complejidad: O(n*n*n)
     public Graph<T> subgraph(Collection<T> vertices){
         // Que pasa si el usuario introduce vertices que no estan en el grafo?
         // Si el numero de vertices que nos estan pasando es mayor que el numero
@@ -246,7 +254,8 @@ class AdjancencyListGraph<T> implements Graph<T> {
     }
     public static void main(String[] args) {
         AdjancencyListGraph<Integer> listaAdyacencias = new AdjancencyListGraph<Integer>();
-        
+        // Verificar consistencia del metodo de sucesores
+        // Una vez terminado esto, crear un archivo main (volver la clase publica)
         listaAdyacencias.add(14);
         listaAdyacencias.add(20);
         listaAdyacencias.add(150);
@@ -265,7 +274,5 @@ class AdjancencyListGraph<T> implements Graph<T> {
         listaAdyacencias.size();
         listaAdyacencias.getAllVertices();
         // vertice x = listaAdyacencias.conjunto_V.get(1);
-        System.out.println(listaAdyacencias.vertexCardinality);
-        System.out.println(listaAdyacencias.edgeCardinality);
     }
 }

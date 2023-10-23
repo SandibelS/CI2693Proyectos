@@ -14,3 +14,4 @@ interface Graph<T> {
     int size();
     Graph<T> subgraph(Collection<T> vertices);
 }
+ 

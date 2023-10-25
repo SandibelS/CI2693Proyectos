@@ -4,7 +4,7 @@ Integrantes:
     1910211 Prieto Tovar, Jesùs Leonardo,
     1710614 Soares Dos Reis, Sandibel Yescenia.
     
-Implementación de un grafo dirigido simple por medio de listas de adyacencias.
+Implementación de un grafo dirigido simple por medio de listas de adyacencias usando la definición de lista de adyacencias del libro GRAFOS Y ALGORITMOS (Oscar Meza H, Maruja Ortega F.). Esta representación tiene como ventaja principal el manejo dinámico de la memoria, lo que permite una implementación más flexible de  las operaciones agregar vértices y eliminar lados.
 Para nuestra implementacion usaremos el framework Collection que nos proporciona Java, en específico usaremos la interfaz de List y su apartado de LinkedList en nuestro codigo.
 
 ## Class AdjancencyListGraph
@@ -24,18 +24,18 @@ Metodos de la clase y sus complejidades:
 ### add
     boolean add(T vertex);
     
-    Como este metodo verifica primero si el vertice pertenece al conjunto, el peor caso ocurre cuando 
-    pertenece pero se encuentra de ultimo en la lista, es decir, debe recorrer todos los elementos del conjunto V.  
+    Primero se verifica si el vertice ya pertenece al grafo por medio del metodo contains(), el peor caso de este metodo es O(|V|). Luego, si el vertice no esta en el grafo, se crea un nodo con el vertice como valor y se agrega al grafo, esto es O(1).
+
 Complejidad: $O(|V|)$
 
 ### connect
     boolean (T from, T to);
     
-    Se hace una primera revision en la lista de nodos para saber si ambos elementos pertenecen, esto tiene un tiempo de O(|V|).
-    Se realiza una primera busqueda para hallar el nodo con valor from, el tiempo de esta operacion es O(|V|).
+    Se revisa si ambos elementos pertenecen al grafo por medio del metodo contains(), esto tiene un tiempo de O(|V|).
+    Si ambos vertices estan en el grafo, se realiza una primera busqueda para hallar el nodo con valor from, en el peor caso toma O(|V|).
     Una vez hayado el nodo se realiza una segunda revision para saber si el parametro to pertenece a la 
-    lista de sucesores del nodo, en el peor caso el vertice from está conectado con todos los otros vertices,
-    incluyendose a si mismo, por tanto se tendria que recorrer la cardinalidad de vertices en su lista de sucesores.
+    lista de sucesores del nodo, de esta forma no se vuelve a agregar el vertice to. El peor caso ocure cuando el vertice from está conectado con todos los otros vertices, incluyendose a si mismo, por tanto se tendria que recorrer la cardinalidad de vertices en su lista de sucesores.
+
 Complejidad: $O(|V|^2)$
 
 ### disconnect
@@ -47,7 +47,7 @@ Complejidad: $O(|V|^2)$
 ### contains
     boolean contains(T vertex);
     
-    Se realiza un recorrido a toda la lista de nodos en el peor caso.
+    Si el vertice pasado no esta en el grafo, se realiza un recorrido a toda la lista de nodos.
 Complejidad: $O(|V|)$
 
 ### getInwardEdges
@@ -55,9 +55,9 @@ Complejidad: $O(|V|)$
     
     Se realiza una primera busqueda para saber si el vertice pertenece al grafo y en caso de no tenerlo retorna null (tiempo O(|V|)).
     Si el parametro to pertence entonces se crea una una lista que contendra los predecesores, luego verificamos la lista de 
-    sucesores de cada nodo para saber si esta contenido el parametro, en caso que se encuentre agregamos el nodo a la lista de predecesores. 
+    sucesores de cada nodo para saber si esta contenido el parametro, en caso de que se encuentre agregamos el valor del nodo a la lista de predecesores. 
     
-    Hacer un recorrido por la lista de nodos tiene un tiempo de O(|V|) y chequear su lista de sucesores es tambien O(|V|).
+    Hacer un recorrido por la lista de nodos tiene un tiempo de O(|V|) y chequear su lista de sucesores es tambien O(|V|) en el peor caso.
 Complejidad: $O(|V|^2)$
 
 ### getOutwardEdges
@@ -65,7 +65,7 @@ Complejidad: $O(|V|^2)$
     
     Se crea una lista que contendra a los sucesores del vertice, primero se verifica si el vertice pertenece al 
     conjunto de nodos (O(|V|)), en caso de pertenecer este busca el nodo con ese valor O(|V|) y retorna una 
-    copia de la lista de sucesores.
+    copia de la lista de sucesores, de esta forma no se pasa la lista de sucesores por referencia.
 Complejidad: $O(|V|^2)$
 
 ### getVerticesConnectedTo
@@ -102,7 +102,7 @@ Complejidad: $O(|V|^2)$
 ### size
     int size()
     
-    Retorna el la cardinadlidad de vertices que tiene el grafo 
+    Retorna el la cardinadlidad de vertices que tiene el grafo usando el metodo size() de LinkedList el cual tomas O(1).
 Complejidad: $O(1)$
 
 ### subgraph
@@ -114,6 +114,6 @@ Complejidad: $O(1)$
 
     Revisar que todos los vertices que se pasaron estan en el grafo (luego de revisar el tamaño de la coleccion) en el peor caso toma O(|V|), cuando el usuario quiere un clone del grafo actual.
 
-    Luego de verificar la pertenencia y agregar los vertices al subgrafo, se obtienen los sucesores de cada vertice de la collecion, se recorren estos vertices y si alguno esta en la collecion, entonces se conectan los vertices en el subgrafo, esto seria O(|V|^3).
+    Luego de verificar la pertenencia y agregar los vertices al subgrafo, se obtienen los sucesores de cada vertice de la collecion, se recorren estos sucesores y si alguno esta en la collecion, entonces se conectan los vertices en el subgrafo, esto seria O(|V|^3).
 
 Complejidad: $O(|V|^3)$

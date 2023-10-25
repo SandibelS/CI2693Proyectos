@@ -1,14 +1,14 @@
 # CI2693. Proyecto I: Grafo. Implementación con listas de adyacencias
 
 Integrantes:
-    1910211 Prieto Tovar, Jesùs Leonardo,
-    1710614 Soares Dos Reis, Sandibel Yescenia.
+- 1910211 Prieto Tovar, Jesùs Leonard.
+- 1710614 Soares Dos Reis, Sandibel Yescenia.
     
 Implementación de un grafo dirigido simple por medio de listas de adyacencias usando la definición de lista de adyacencias del libro GRAFOS Y ALGORITMOS (Oscar Meza H, Maruja Ortega F.). Esta representación tiene como ventaja principal el manejo dinámico de la memoria, lo que permite una implementación más flexible de las operaciones agregar vértices y eliminar lados.
 Para nuestra implementación usaremos el framework Collection que nos proporciona Java, en específico usaremos la interfaz de List y su apartado de LinkedList en nuestro código.
 
 ## Class AdjancencyListGraph
-    Esta clase crea un objeto(grafo) que poseerá dos atributos y una clase para definir los vértices.
+Esta clase crea un objeto(grafo) que poseerá dos atributos y una clase para definir los vértices.
     
     Atributos:
         - List<node<T>>graph: Lista enlazada que contiene los vértices(nodo<T>) del grafo.

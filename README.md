@@ -24,8 +24,8 @@ Metodos de la clase y sus complejidades:
 ### add
     boolean add(T vertex);
     
-    Primero se verifica si el vértice ya pertenece al grafo por medio del método contains(), el peor caso de este método es O(|V|). 
-    Luego, si el vértice no está en el grafo, se crea un nodo con el vértice como valor y se agrega al grafo, esto es O(1).
+Primero se verifica si el vértice ya pertenece al grafo por medio del método contains(), el peor caso de este método es O(|V|). 
+Luego, si el vértice no está en el grafo, se crea un nodo con el vértice como valor y se agrega al grafo, esto es O(1).
 
 Complejidad: $O(|V|)$
 

@@ -193,22 +193,24 @@ public class AdjacencyListGraph<T> implements Graph<T> {
 
     public Graph<T> subgraph(Collection<T> vertices){
 
-        Graph<T> subgraph = new AdjacencyListGraph<T>();
-
-        for (node<T> i: graph){
-            if (!vertices.contains(i.value)){
-                continue;
-            }
-            subgraph.add(i.value);
+        if(vertices.size() > graph.size()){
+            return null;
         }
 
-        for (node<T> i: graph){
-            if (!vertices.contains(i.value)){
-                continue;
+        Graph<T> subgraph = new AdjacencyListGraph<T>();
+
+        for (T i: vertices){
+            if (!this.contains(i)){
+                return null;
             }
-            for (T succesor: i.successorsList){
+            subgraph.add(i);
+        }
+
+        for (T i: vertices){
+            List<T> successors = this.getOutwardEdges(i);
+            for (T succesor: successors){
                 if(vertices.contains(succesor)){
-                    subgraph.connect(i.value, succesor);
+                    subgraph.connect(i, succesor);
                 }
             }
         }
